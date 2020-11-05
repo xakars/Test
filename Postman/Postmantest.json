@@ -1,0 +1,558 @@
+{
+	"info": {
+		"_postman_id": "4568e9b1-0060-4d67-b188-ddd77efd7675",
+		"name": "QA1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3df99aef-ba41-4573-8c75-60c41097c9a2",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "login",
+							"value": "ars",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "sven",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/login",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "r_userinfo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d15ed780-791b-479e-a70d-3f2adbe57856",
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"salary\", jsonData.person.u_salary_1_5_year);",
+							"",
+							"",
+							"pm.test(\"Proverka koff\", function(){",
+							"    var reqdata = request.data;",
+							"    var startZP = reqdata.salary;",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.qa_salary_after_6_months).to.eql(startZP*2);",
+							"    pm.expect(jsonData.qa_salary_after_12_months).to.eql(startZP*2.9);",
+							"    pm.expect(jsonData.person.u_salary_1_5_year).to.eql(startZP*4);",
+							"});",
+							"",
+							"",
+							"const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"person\":{\"type\": \"object\",",
+							"            \"properties\":{",
+							"                \"u_age\":{\"type\": \"number\"},",
+							"                \"u_name\":",
+							"                {\"type\": \"array\",",
+							"                \"items\": [",
+							"                    {\"type\": \"string\"},",
+							"                    {\"type\": \"number\"},",
+							"                    {\"type\": \"number\"}",
+							"                ]",
+							"                },",
+							"                \"u_salary_1_5_year\": {\"type\": \"number\"}",
+							"            }",
+							"            },",
+							"            \"qa_salary_after_12_months\": {\"type\": \"number\"},",
+							"            \"qa_salary_after_6_months\": {\"type\": \"number\"},",
+							"            \"start_qa_salary\": {\"type\": \"number\"}",
+							"        }",
+							"    };",
+							" pm.test(\"Validate schema\",() => {",
+							"     pm.response.to.have.jsonSchema(schema);",
+							" });",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "age",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "400",
+							"type": "text"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "arsen",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/user_info",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"user_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "n_d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "77bddaee-0edd-4fd7-bf58-d9d5b9c99ea0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Proverka koff\", function(){",
+							"    var reqdata = request.data;",
+							"    var ZP = reqdata.salary;",
+							"    pm.expect(jsonData.salary[1]).to.eql(String(ZP*2));",
+							"    pm.expect(jsonData.salary[2]).to.eql(String(ZP*3));",
+							"    ",
+							"});",
+							"",
+							"pm.test (\"sravnenie\", function() {",
+							"   pm.expect(Number(jsonData.salary[1])) > jsonData.salary[0];",
+							"",
+							"});",
+							"",
+							"const schema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"age\":{\"type\":\"number\"},",
+							"        \"name\":{\"type\":\"string\"},",
+							"        \"salary\":{",
+							"            \"type\":\"array\",",
+							"            \"items\": [",
+							"                {\"type\": \"number\"},",
+							"                {\"type\": \"string\"},",
+							"                {\"type\": \"string\"}",
+							"            ]",
+							"            }",
+							"    }",
+							"}",
+							"",
+							"pm.test(\"Validate schema\",() => {",
+							"     pm.response.to.have.jsonSchema(schema);",
+							" });",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "5000",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "arsen",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/new_data",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"new_data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pet_inf",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "27fc11f7-375a-4200-ae59-aa6a58b75c67",
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Proverka koff\", function(){",
+							"    var jsonData = pm.response.json();",
+							"    var reqdata = request.data;",
+							"    var k_daily_food = 0.012;",
+							"    var k_daily_sleep = 2.5;",
+							"    pm.expect(jsonData.daily_food).to.eql(reqdata.weight*k_daily_food);",
+							"    pm.expect(jsonData.daily_sleep).to.eql(reqdata.weight*k_daily_sleep);",
+							"",
+							"});",
+							"",
+							"const schema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"age\":{\"type\": \"number\"},",
+							"        \"daily_food\":{\"type\": \"number\"},",
+							"        \"daily_sleep\":{\"type\": \"number\"},",
+							"        \"name\": {\"type\": \"string\"}",
+							"    }",
+							"}",
+							"pm.test(\"Validate schema\",() => {",
+							"     pm.response.to.have.jsonSchema(schema);",
+							" });",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "age",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "weight",
+							"value": "52",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "arsen",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/test_pet_info",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"test_pet_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_t_u",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "df4d7c4d-1a52-4cac-9664-f32feeb881cb",
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var reqdata = request.data;",
+							"var resData = pm.response.json();",
+							"pm.environment.set(\"name\", reqdata.name);",
+							"",
+							"pm.test (\"eql_age\", function() {",
+							"    pm.expect(resData.age).to.eql(reqdata.age);",
+							"})",
+							"",
+							"pm.test (\"eql_name\", function() {",
+							"pm.expect(resData.name).to.eql(environment.name);",
+							" })",
+							"",
+							" const schema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"age\":{\"type\": \"string\"},",
+							"        \"family\":{",
+							"            \"type\": \"object\",",
+							"            \"properties\": {",
+							"                \"children\":{\"type\": \"array\"},",
+							"                \"properties\": {",
+							"                    \"items\":[",
+							"                        {\"type\": \"array\",",
+							"                        \"contains\":{",
+							"                           \"type\": \"string\",",
+							"                            \"type\": \"number\"",
+							"                        }},",
+							"                        {\"type\": \"array\",",
+							"                        \"contains\": {",
+							"                            \"type\": \"string\",",
+							"                            \"type\": \"number\"",
+							"                        }}",
+							"                    ]",
+							"                    ",
+							"                },",
+							"                \"u_salary_1_5_year\": {\"type\": \"number\"}",
+							"                ",
+							"            }",
+							"            ",
+							"            },",
+							"        \"daily_sleep\":{\"type\": \"number\"},",
+							"        \"name\": {\"type\": \"string\"}",
+							"    }",
+							"}",
+							"pm.test(\"Validate schema\",() => {",
+							"     pm.response.to.have.jsonSchema(schema);",
+							" });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "age",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "arsen",
+							"type": "text"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/get_test_user",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"get_test_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "curr",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "65ce6bed-27f3-42cd-b0aa-5027348088fc",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"Cur_ID\", jsonData[Math.floor(Math.random() * jsonData.length)].Cur_ID);",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"    "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/currency",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "byn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "83001f1f-1d84-40bf-b89a-339f3cf271de",
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const schema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"Cur_Abbreviation\":{\"type\": \"string\"},",
+							"        \"Cur_ID\":{\"type\": \"number\"},",
+							"        \"Cur_Name\":{\"type\": \"string\"},",
+							"        \"Cur_OfficialRate\": {\"type\": \"number\"},",
+							"        \"Cur_Scale\": {\"type\": \"number\"},",
+							"        \"Date\": {\"type\": \"string\"}",
+							"    }",
+							"}",
+							"pm.test(\"Validate schema\",() => {",
+							"     pm.response.to.have.jsonSchema(schema);",
+							" });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "curr_code",
+							"value": "{{Cur_ID}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://vks1host.pythonanywhere.com/curr_byn",
+					"protocol": "http",
+					"host": [
+						"vks1host",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"curr_byn"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
